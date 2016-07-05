@@ -1,0 +1,3 @@
+/environments/**
+!/environments/*
+!/environments/*/config.js
