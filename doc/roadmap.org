@@ -1,0 +1,70 @@
+* Distribuited cloud storage
+** componenti
+*** matcher ask/bid
+da valutare la realizzazione
+
+**** rete peer to peer
+soluzione off chain, auto discovery dei peer e dei loro interessi
+comprende la negoziazione del contratto
+
+*pro*
+efficiente
+off chain
+flessibile
+
+*con*
+difficile da realizzare
+**** smart contract
+soluzione direttamente nella blockchain implementata con uno o piu smart contract
+
+*pro*
+fattibile da realizzare
+
+*con*
+possibile blockchain bloat
+on chain limitations
+*** blockchain application logic
+gestisce gli incentivi allo storage dei file ipfs
+
+**** architettura
+***** metadata database
+per registrare i contratti di storage tra peer
+
+****** contract database
+contractID -> contract
+
+ogni contratto e indicizzato in base ad un id numerico per essere facilmente recuperabile
+****** contract registry
+address -> [contractID]
+
+per ogni utente tiene traccia di tutti i contratti di storage stipulati
+=probabilmente viene unito al contract database=
+
+
+****** farmer registry?
+address -> amount
+
+registro dei farmer accreditati, per iscriversi bisogna depositare una certa somma
+come garanzia, questa puo essere distrutta in seguito a comportamenti disonesti
+
+=valutare la possibilita di utilizzarlo anche come offert database=
+****** offert database?
+necessario nel caso di matcher ask/bid implementato nella blockchain
+
+valutare utilizzo di *event* messi a disposizione da ethereum
+***** macchina stati per creazione contratto di storage
+***** gestione pagamenti
+farmer manda transazione (dovrebbe contenere proof of storage) indicando un contratto
+e riceve il pagamento pattuito
+questo contratto deve anche conservare i fondi messi in anticipo dall'owner e magari 
+la caparra del farmer
+***** UI
+contratto per gestire gli altri contratti, rappresenta l'entry point per la node application
+*** ipfs
+fare il pin di un file quando si firma un contratto in modo automatico
+*** node application
+*features possibili*
+**** gestione erasure code 
+**** richiedere contratti
+**** offrire contratti
+**** visualizzazione dettagli
