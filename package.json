@@ -1,0 +1,7 @@
+{
+  "name": "ethbox",
+  "version": "1.0.0",
+  "dependencies": {
+    "ipfs-api": "^6.0.3"
+  }
+}

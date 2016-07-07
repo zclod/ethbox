@@ -59,8 +59,8 @@ window.onload = function() {
 }
 
 function testIpfs(){
-    ipfs.pin.add("/ipfs/QmW2WQi7j6c7UgJTarActp7tDNikE4B2qXtFCfLPdsgaTQ/", function(err, res){
-        console.log(res);
-    });
+    // ipfs.pin.add("/ipfs/QmW2WQi7j6c7UgJTarActp7tDNikE4B2qXtFCfLPdsgaTQ/", function(err, res){
+    //     console.log(res);
+    // });
     ipfs.ls("/ipfs/QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG/", (err, res) => console.log(res.Objects[0]));
 }
