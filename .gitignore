@@ -1,3 +1,5 @@
 /environments/**
 !/environments/*
 !/environments/*/config.js
+
+node_modules/

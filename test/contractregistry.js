@@ -2,7 +2,7 @@ contract('ContractRegistry', function(accounts) {
     it("should create 2 storage contracts", function(done) {
         var reg = ContractRegistry.deployed();
 
-        reg.newContract(accounts[0],accounts[1], 10, "ciao1");
+        reg.newContract(accounts[0],accounts[1], 10, "ciao1", {value:1000000});
         reg.newContract(accounts[0],accounts[2], 10, "ciao2");
         reg.getContracts.call(accounts[0]).then(function(clist) {
             console.log(clist);
