@@ -30,6 +30,9 @@ gestisce gli incentivi allo storage dei file ipfs
 ***** metadata database
 per registrare i contratti di storage tra peer
 
+****** file database?
+gestisce tutti i file che mettiamo, magari tenendo una lista
+delle parti di cui un file e stato scomposto
 ****** contract database
 contractID -> contract
 
@@ -62,7 +65,10 @@ la caparra del farmer
 contratto per gestire gli altri contratti, rappresenta l'entry point per la node application
 *** ipfs
 fare il pin di un file quando si firma un contratto in modo automatico
-*** node application
+*** application
+da valutare 2 applicazioni, web app per client utilizzando truffle e node application
+per farmer cosi da poterla far andare in background
+
 *features possibili*
 **** gestione erasure code 
 **** richiedere contratti
