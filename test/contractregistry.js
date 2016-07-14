@@ -24,23 +24,4 @@ contract('ContractRegistry', function(accounts) {
             // assert.equal(contractRet[3], web3.fromAscii('ciao1', 32), "ipfsAddress errato");
         }).then(done).catch(done);
     });
-    it("should send wei in response to a positive proof of storage", function(done){
-        var reg = ContractRegistry.deployed();
-
-        farmerBalance = web3.eth.getBalance(accounts[1]);
-        console.log(farmerBalance);
-
-        reg.proof(0, 1337,{from : accounts[1]}).then(function(){
-            return reg.contracts.call(0);
-        }).then(function(contractRet){
-            console.log(web3.eth.blockNumber);
-            console.log(contractRet[6]);
-            console.log(contractRet[4]);
-
-        }).then(done).catch(done);
-
-        reg.proof(0, 1337,{from : accounts[0]}).then(function(){
-        }).then(done).catch(function(){console.log("exception presa")});
-
-    });
 });

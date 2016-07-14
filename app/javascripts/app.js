@@ -4,36 +4,20 @@ var balance;
 var ipfs;
 
 function setStatus(message) {
-    var status = document.getElementById("status");
-    status.innerHTML = message;
+    var list = document.getElementById("contractlist");
+    list.innerHTML += "<li> " + message + " </li>";
 };
 
-function refreshBalance() {
-    var meta = MetaCoin.deployed();
 
-    meta.getBalance.call(account, {from: account}).then(function(value) {
-        var balance_element = document.getElementById("balance");
-        balance_element.innerHTML = value.valueOf();
-    }).catch(function(e) {
-        console.log(e);
-        setStatus("Error getting balance; see log.");
-    });
-};
+function createContract() {
+    var reg = ContractRegistry.deployed();
 
-function sendCoin() {
-    var meta = MetaCoin.deployed();
+    var farmer = document.getElementById("farmer").value;
+    var duration = parseInt(document.getElementById("duration").value);
+    var ipfsAddress = document.getElementById("ipfs").value;
 
-    var amount = parseInt(document.getElementById("amount").value);
-    var receiver = document.getElementById("receiver").value;
+    reg.newContract(accounts[0], farmer, duratio, ipfsAddress, 42, {value:1000000, from: accounts[0]}).then(function(){
 
-    setStatus("Initiating transaction... (please wait)");
-
-    meta.sendCoin(receiver, amount, {from: account}).then(function() {
-        setStatus("Transaction complete!");
-        refreshBalance();
-    }).catch(function(e) {
-        console.log(e);
-        setStatus("Error sending coin; see log.");
     });
 };
 
@@ -53,14 +37,6 @@ window.onload = function() {
         account = accounts[0];
 
         ipfs = IpfsApi('/ip4/127.0.0.1/tcp/5001');
-        // refreshBalance();
     });
 
-}
-
-function testIpfs(){
-    // ipfs.pin.add("/ipfs/QmW2WQi7j6c7UgJTarActp7tDNikE4B2qXtFCfLPdsgaTQ/", function(err, res){
-    //     console.log(res);
-    // });
-    ipfs.ls("/ipfs/QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG/", (err, res) => console.log(res.Objects[0]));
 }

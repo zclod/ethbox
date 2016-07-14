@@ -31,8 +31,8 @@ contract ContractRegistry{
     }
 
 
-    function newContract(address owner, address farmer, uint duration, bytes32 ipfsAddress, uint costPerBlock) returns (uint contractID){
-        contractID = numContracts++;
+    function newContract(address owner, address farmer, uint duration, bytes32 ipfsAddress, uint costPerBlock) {
+        uint contractID = numContracts++;
         contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, block.number + duration, msg.value, costPerBlock, 0);
 
         contractIndex[owner].push(contractID);
