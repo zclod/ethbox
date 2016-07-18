@@ -16,7 +16,7 @@ function createContract() {
     var duration = parseInt(document.getElementById("duration").value);
     var ipfsAddress = document.getElementById("ipfs").value;
 
-    reg.newContract(accounts[0], farmer, duration, ipfsAddress, 42, {value:1000000, from: accounts[0]}).then(function(){
+    reg.newContract(accounts[0], farmer, duration, ipfsAddress, 42, {value:1000000, gas:1000000, from: accounts[0]}).then(function(){
 
     });
 };

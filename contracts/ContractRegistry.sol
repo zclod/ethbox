@@ -20,23 +20,24 @@ contract ContractRegistry{
     }
 
 
+    event NewContract(
+        uint contractID,
+        address indexed onwer,
+        address indexed farmer,
+        uint terminationBlock
+    );
+
+
     uint numContracts;
-    mapping(address => uint[]) contractIndex;
-
     mapping(uint => StorageContract) public contracts;
-
-
-    function getContracts(address owner) constant returns (uint[] contractList){
-        return contractIndex[owner];
-    }
 
 
     function newContract(address owner, address farmer, uint duration, bytes32 ipfsAddress, uint costPerBlock) {
         uint contractID = numContracts++;
-        contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, block.number + duration, msg.value, costPerBlock, 0);
+        uint terminationBlock = block.number + duration;
+        contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, terminationBlock, msg.value, costPerBlock, 0);
 
-        contractIndex[owner].push(contractID);
-        contractIndex[farmer].push(contractID);
+        NewContract(contractID, owner, farmer, terminationBlock);
     }
 
 
