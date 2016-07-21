@@ -17,14 +17,14 @@ contract ContractRegistry{
         // bool isActive;
         //ultimo blocco in cui e stata fatta una proof of storage
         uint lastBlockProof;
+        //uint proofWindow;
     }
 
 
     event NewContract(
         uint contractID,
         address indexed onwer,
-        address indexed farmer,
-        uint terminationBlock
+        address indexed farmer
     );
 
 
@@ -34,10 +34,9 @@ contract ContractRegistry{
 
     function newContract(address owner, address farmer, uint duration, bytes32 ipfsAddress, uint costPerBlock) {
         uint contractID = numContracts++;
-        uint terminationBlock = block.number + duration;
-        contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, terminationBlock, msg.value, costPerBlock, 0);
+        contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, block.number + duration, msg.value, costPerBlock, 0);
 
-        NewContract(contractID, owner, farmer, terminationBlock);
+        NewContract(contractID, owner, farmer);
     }
 
 

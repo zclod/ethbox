@@ -51,20 +51,6 @@ function setupAccount(callback){
 
 //get past contracts
 function setupPreviousContracts(callback){
-    // debugger;
-    // reg.getContracts.call(account).then(
-    //     (indexes) => {
-    //         debugger;
-    //         indexList = indexes;
-    //         return Promise.map(indexes, (i) => {
-    //             debugger;
-    //             return reg.contracts.call(i);
-    //         });
-    //     }).then((contracts) => {
-    //         debugger;
-    //         contractList = contracts;
-    //         callback();
-    //     });
     var pastEvents = reg.NewContract({farmer: account}, {fromBlock:0});
     debugger;
     var result = pastEvents.get(function(err, logs){
@@ -75,19 +61,26 @@ function setupPreviousContracts(callback){
 }
 
 function app(){
-    console.log(account);
-    console.log(contractList);
     var myEvent = reg.NewContract({farmer: account});
     myEvent.watch(function(err, res){
-        console.log(res);
+        reg.contracts.call(res.args.contractID)
+            .then( function(contract){
+                contractList.push(formatContract(contract));
+            });
     });
 }
 
-// var myEvent = reg.NewContract({farmer: account});
-// myEvent.watch(function(err, res){
-//     console.log(res);
-// });
-
+function formatContract(unformattedContract){
+    return {
+        owner: unformattedContract[0],
+        farmer: unformattedContract[1],
+        ipfsAddress: unformattedContract[2],
+        expireDate: unformattedContract[3],
+        founds: unformattedContract[4],
+        weiPerBlock: unformattedContract[5],
+        lastBlockProof: unformattedContract[6]
+    };
+}
 
 async.series([setupAccount, setupPreviousContracts],
              app);
