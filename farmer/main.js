@@ -3,6 +3,10 @@
 const Promise = require('bluebird');
 const async = require('async');
 
+const ipfsAPI = require('ipfs-api');
+const ipfs = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
+Promise.promisifyAll(ipfs);
+
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const Pudding = require('ether-pudding'); // v2.0.9
@@ -17,33 +21,13 @@ const reg = ContractRegistry.deployed();
 // if(!argv.params.address)
 var account;
 var contractList = [];
-var indexList = [];
-var currentBlock;
-
-var asyncTasks = [];
 
 var getAccounts = Promise.promisify(web3.eth.getAccounts);
 
-// getAccounts(
-// ).then(function(accs){
-//     account = accs[0];
-// }).then(function(){
-//     return reg.getContracts.call(account);
-// }).then(function(indexes){
-//     return Promise.map(indexes, function(i){
-//         return reg.contracts.call(i);
-//     });
-// }).then(function(contracts){
-//     contractList = contracts;
-// }).then(function(){
-//     console.log(contractList);
-// });
-//-------------------------------------------------------------------------------------------------
 
 //setup account
 function setupAccount(callback){
     getAccounts().then(function(accounts){
-        debugger;
         account = accounts[1];
         callback();
     });
@@ -51,64 +35,65 @@ function setupAccount(callback){
 
 //get past contracts
 function setupPreviousContracts(callback){
-    var pastEvents = reg.NewContract({farmer: account}, {fromBlock:0});
-    debugger;
-    var result = pastEvents.get(function(err, logs){
-        debugger;
-        contractList = logs;
-        callback();
+    let pastEvents = reg.NewContract({farmer: account}, {fromBlock:0});
+    let result = pastEvents.get(function(err, logs){
+        Promise.map(logs, (l) => {
+            return l.args.contractID;
+        }).then((contractIDs) => {
+            contractList = contractIDs;
+            callback();
+        });
     });
 }
 
 function app(){
-    var myEvent = reg.NewContract({farmer: account});
+    let myEvent = reg.NewContract({farmer: account});
     myEvent.watch(function(err, res){
-        reg.contracts.call(res.args.contractID)
-            .then( function(contract){
-                contractList.push(formatContract(contract));
+        contractList.push(res.args.contractID);
+    });
+
+
+    let latestBlockFilter = web3.eth.filter('latest');
+    latestBlockFilter.watch(function(err, blockhash){
+        if(err)
+            console.log(err);
+
+        let lastBlockNumber = web3.eth.blockNumber;
+
+        Promise.map(contractList, (id) => {
+            let currentContract = reg.contracts.call(id);
+            return Promise.join(id, currentContract, (contractID, contract)=>{
+                let formattedContract = formatContract(contract);
+                formattedContract.id = contractID;
+                return formattedContract;
             });
+        }).then((contracts) =>{
+            let contractToProve = contracts
+                .filter((c) => {return c.expireDate > lastBlockNumber;})
+                .filter((c) => {return lastBlockNumber - c.lastBlockProof > 0.7 * c.proofWindow;});
+
+            Promise.map(contractToProve, (c) => {
+                reg.proof(c.id, 21, {from: account}).then(()=>{
+                    ipfs.lsAsync(c.ipfsAddress)
+                        .then((res)=>{console.log(res);});
+                });
+            });
+        });
     });
 }
 
 function formatContract(unformattedContract){
     return {
-        owner: unformattedContract[0],
-        farmer: unformattedContract[1],
-        ipfsAddress: unformattedContract[2],
-        expireDate: unformattedContract[3],
-        founds: unformattedContract[4],
-        weiPerBlock: unformattedContract[5],
-        lastBlockProof: unformattedContract[6]
+        owner          : unformattedContract[0],
+        farmer         : unformattedContract[1],
+        ipfsAddress    : unformattedContract[2],
+        expireDate     : unformattedContract[3],
+        founds         : unformattedContract[4],
+        weiPerBlock    : unformattedContract[5],
+        lastBlockProof : unformattedContract[6],
+        proofWindow    : unformattedContract[7]
     };
 }
 
 async.series([setupAccount, setupPreviousContracts],
              app);
-
-// getAccounts(
-// ).then(function(accs){
-//     account = accs[0];
-//     currentBlock = web3.eth.blockNumber;
-// }).then(function(){
-//     // return pastEvents();
-// }).then(function(){
-//     // console.log(logs);
-//     var history = reg.NewContract({farmer: account}).get(function(err,logs){
-//         // var pastEvents = Promise.promisify(history.get);
-//         debugger;
-//         console.log(logs);
-//     });
-// });
-
-//-------------------------------------------------------------------------------------------------
-//listen for the latest block (main loop)
-
-// var latestBlockFilter = web3.eth.filter('latest');
-
-// latestBlockFilter.watch(function(err, blockhash){
-//     if(err)
-//         console.log(err);
-
-//     console.log(blockhash);
-// });
-

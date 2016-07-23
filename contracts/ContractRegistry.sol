@@ -4,7 +4,7 @@ contract ContractRegistry{
     struct StorageContract {
         address owner;
         address farmer;
-        bytes32 ipfsAddress;
+        string ipfsAddress;
 
         //block number when the contract end
         uint expireDate;
@@ -13,11 +13,10 @@ contract ContractRegistry{
         uint founds;
         //quanto pagare ogni blocco(unita di tempo) sulla blockchain
         uint weiPerBlock;
-        //the contract is running
-        // bool isActive;
         //ultimo blocco in cui e stata fatta una proof of storage
         uint lastBlockProof;
-        //uint proofWindow;
+        // max block number between proof
+        uint proofWindow;
     }
 
 
@@ -32,9 +31,9 @@ contract ContractRegistry{
     mapping(uint => StorageContract) public contracts;
 
 
-    function newContract(address owner, address farmer, uint duration, bytes32 ipfsAddress, uint costPerBlock) {
+    function newContract(address owner, address farmer, uint duration, string ipfsAddress, uint costPerBlock) {
         uint contractID = numContracts++;
-        contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, block.number + duration, msg.value, costPerBlock, 0);
+        contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, block.number + duration, msg.value, costPerBlock, 0, 10);
 
         NewContract(contractID, owner, farmer);
     }
@@ -53,12 +52,16 @@ contract ContractRegistry{
 
         //TODO
         //test of the proof
-
-        var timePassed = block.number - c.lastBlockProof;
-        c.lastBlockProof = block.number;
-        var payAmount = c.weiPerBlock * timePassed;
-        c.founds -= payAmount;
-        c.farmer.send(payAmount);
+        if(c.lastBlockProof == 0){
+            c.lastBlockProof = block.number;
+        }
+        else{
+          var timePassed = block.number - c.lastBlockProof;
+          c.lastBlockProof = block.number;
+          var payAmount = c.weiPerBlock * timePassed;
+          c.founds -= payAmount;
+          c.farmer.send(payAmount);
+        }
     }
 
 
