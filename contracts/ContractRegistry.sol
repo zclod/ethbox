@@ -1,3 +1,5 @@
+import "ECVerify.sol";
+
 contract ContractRegistry{
 
 

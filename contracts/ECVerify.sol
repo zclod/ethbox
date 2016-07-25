@@ -19,7 +19,7 @@
 // Written by Alex Beregszaszi (@axic), use it under the terms of the MIT license.
 //
 
-contract ECVerify { 
+library ECVerify { 
     function ecrecovery(bytes32 hash, bytes sig) returns (address) {
         bytes32 r;
         bytes32 s;

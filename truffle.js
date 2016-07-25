@@ -11,7 +11,8 @@ module.exports = {
         "images/": "images/"
     },
     deploy: [
-        "ContractRegistry"
+        "ContractRegistry",
+        "ECVerify"
     ],
     rpc: {
         host: "localhost",
