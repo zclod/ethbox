@@ -82,6 +82,7 @@ function app(){
     });
 }
 
+//FIXME: aggiustare i campi
 function formatContract(unformattedContract){
     return {
         owner          : unformattedContract[0],

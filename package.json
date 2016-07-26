@@ -2,6 +2,8 @@
   "name": "ethbox",
   "version": "1.0.0",
   "dependencies": {
-    "ipfs-api": "^6.0.3"
+    "bignumber.js": "^2.4.0",
+    "ipfs-api": "^6.0.3",
+    "solidity-sha3": "^0.4.1"
   }
 }

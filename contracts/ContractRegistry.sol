@@ -4,27 +4,37 @@ contract ContractRegistry{
 
 
     struct StorageContract {
+        //---------------------------------------------------------
+        // in the signature
+
+
         address owner;
         address farmer;
         string ipfsAddress;
 
-        //block number when the contract end
-        uint expireDate;
-        // possibile bloccare i fondi di pagamento
-        // direttamente nel contratto?
-        uint founds;
         //quanto pagare ogni blocco(unita di tempo) sulla blockchain
         uint weiPerBlock;
-        //ultimo blocco in cui e stata fatta una proof of storage
-        uint lastBlockProof;
         // max block number between proof
         uint proofWindow;
+
+        // uint maxStartDate
+        // uint duration
+
+        // end of signature
+        //---------------------------------------------------------
+
+        //block number when the contract end
+        uint expireDate;
+        //ultimo blocco in cui e stata fatta una proof of storage
+        uint lastBlockProof;
+        // founds locked in the contract to pay the farmer
+        uint founds;
     }
 
 
     event NewContract(
         uint contractID,
-        address indexed onwer,
+        address indexed owner,
         address indexed farmer
     );
 
@@ -33,11 +43,32 @@ contract ContractRegistry{
     mapping(uint => StorageContract) public contracts;
 
 
-    function newContract(address owner, address farmer, uint duration, string ipfsAddress, uint costPerBlock) {
-        uint contractID = numContracts++;
-        contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, block.number + duration, msg.value, costPerBlock, 0, 10);
+    // function newContract(address owner, address farmer, uint duration, string ipfsAddress, uint costPerBlock) {
+    //     uint contractID = numContracts++;
+    //     contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, block.number + duration, msg.value, costPerBlock, 0, 10);
 
-        NewContract(contractID, owner, farmer);
+    //     NewContract(contractID, owner, farmer);
+    // }
+
+
+    function newContractVerified(address owner, address farmer, string ipfsAddress, uint weiPerBlock, uint proofWindow, uint maxStartDate, uint duration, bytes signature) {
+        // if (block.number > maxStartDate)
+        //     throw;
+
+        // if (msg.value < duration * weiPerBlock)
+        //     throw;
+
+        //signature verify
+        var contractHash = sha3(owner, farmer, ipfsAddress, weiPerBlock, proofWindow, maxStartDate, duration);
+        bool isSignatureCorrect = ECVerify.ecverify(contractHash, signature, farmer);
+
+        if(isSignatureCorrect){
+            uint contractID = numContracts++;
+            contracts[contractID] = StorageContract(owner, farmer, ipfsAddress, weiPerBlock, proofWindow, block.number + duration, block.number, msg.value);
+            NewContract(contractID, owner, farmer);
+        }
+        else throw;
+
     }
 
 
