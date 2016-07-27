@@ -82,17 +82,16 @@ function app(){
     });
 }
 
-//FIXME: aggiustare i campi
 function formatContract(unformattedContract){
     return {
         owner          : unformattedContract[0],
         farmer         : unformattedContract[1],
         ipfsAddress    : unformattedContract[2],
-        expireDate     : unformattedContract[3],
-        founds         : unformattedContract[4],
-        weiPerBlock    : unformattedContract[5],
+        weiPerBlock    : unformattedContract[3],
+        proofWindow    : unformattedContract[4],
+        expireDate     : unformattedContract[5],
         lastBlockProof : unformattedContract[6],
-        proofWindow    : unformattedContract[7]
+        founds         : unformattedContract[7]
     };
 }
 
