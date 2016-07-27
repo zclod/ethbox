@@ -1,27 +1,29 @@
+var sha3 = require('solidity-sha3');
+
 contract('ContractRegistry', function(accounts) {
-    it("should create 2 storage contracts", function(done) {
-        var reg = ContractRegistry.deployed();
+    it("should create a contract", function(done){
+        let verify = ECVerify.deployed();
+        let registry = ContractRegistry.deployed();
 
-        reg.newContract(accounts[0],accounts[1], 10, "ciao1", 42, {value:1000000});
-        reg.newContract(accounts[0],accounts[2], 10, "ciao2", 0);
-        reg.getContracts.call(accounts[0]).then(function(clist) {
-            // console.log(clist);
-            assert.equal(clist.length, 2, "expected 2 contracts");
-        }).then(done).catch(done);
-    });
-    it("should retrive the correct contract", function(done){
-        var reg = ContractRegistry.deployed();
+        let contract = { owner: accounts[1],
+                         farmer: accounts[0],
+                         ipfsAddress: "QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG",
+                         weiPerBlock: 42,
+                         proofWindow: 100,
+                         maxStartDate: 50,
+                         duration: 1000
+                       };
 
-        reg.getContracts.call(accounts[0]).then(function(clist) {
-            return reg.contracts.call(clist[0]);
-        }).then(function(contractRet){
-            // console.log(contractRet);
-            //le struct vengono ritornate come array 
-            assert.equal(contractRet[0], accounts[0], "owner errato");
-            assert.equal(contractRet[1], accounts[1], "farmer errato");
-            // assert.equal(contractRet[2].c, 10, "duration errata");
-            //funziona bene ma la conversione ha qualche problema
-            // assert.equal(contractRet[3], web3.fromAscii('ciao1', 32), "ipfsAddress errato");
-        }).then(done).catch(done);
+        let contractHash = sha3.default(contract.owner, contract.farmer, contract.ipfsAddress, contract.weiPerBlock, contract.proofWindow, contract.maxStartDate, contract.duration);
+
+        let signature = web3.eth.sign(contract.farmer, contractHash);
+
+        registry.NewContract(function(err, event){
+            assert.equal(event.args.owner, contract.owner, "owner errato");
+            assert.equal(event.args.farmer, contract.farmer, "farmer errato");
+            done();
+        });
+
+        registry.newContractVerified(contract.owner, contract.farmer, contract.ipfsAddress, contract.weiPerBlock, contract.proofWindow, contract.maxStartDate, contract.duration, signature, {value: 314});
     });
 });
