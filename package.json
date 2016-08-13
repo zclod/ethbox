@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "bignumber.js": "^2.4.0",
+    "ethereumjs-util": "^4.5.0",
     "ipfs-api": "^6.0.3",
     "solidity-sha3": "^0.4.1"
   }
