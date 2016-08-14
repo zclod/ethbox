@@ -3,3 +3,5 @@
 !/environments/*/config.js
 
 node_modules/
+
+app/javascripts/dist/

@@ -9,6 +9,16 @@ function signatureVerify(msgHash, signature, signer){
     return signer === signerAddress;
 }
 
+function signContract(contract){
+    let contractHash = hashContract(contract);
+
+    return web3.eth.sign(contract.farmer, contractHash);
+}
+
+function hashContract(contract){
+    return sha3(contract.owner, contract.farmer, contract.ipfsAddress, contract.weiPerBlock, contract.proofWindow, contract.maxStartDate, contract.duration);
+}
+
 contract('ContractRegistry', function(accounts) {
     it("should create a contract", function(done){
         let verify = ECVerify.deployed();
@@ -23,12 +33,10 @@ contract('ContractRegistry', function(accounts) {
                          duration: 1000
                        };
 
-        let contractHash = sha3(contract.owner, contract.farmer, contract.ipfsAddress, contract.weiPerBlock, contract.proofWindow, contract.maxStartDate, contract.duration);
-
-        let signature = web3.eth.sign(contract.farmer, contractHash);
+        let signature = signContract(contract);
 
         // signature validation in javascript
-        assert.equal(signatureVerify(contractHash, signature, contract.farmer), true, "signature errata");
+        assert.equal(signatureVerify(hashContract(contract), signature, contract.farmer), true, "signature errata");
 
         registry.NewContract(function(err, event){
             assert.equal(event.args.owner, contract.owner, "owner errato");

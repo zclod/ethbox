@@ -3,6 +3,8 @@ module.exports = {
         "index.html": "index.html",
         "app.js": [
             "../node_modules/ipfs-api/dist/index.js",
+            "../node_modules/peerjs/dist/peer.js",
+            "javascripts/dist/ethboxutil.js",
             "javascripts/app.js"
         ],
         "app.css": [
