@@ -1,23 +1,24 @@
 var sha3 = require('solidity-sha3').default;
 var util = require('ethereumjs-util');
+var ethboxutil = require('../app/javascripts/ethboxutil.js');
 
-function signatureVerify(msgHash, signature, signer){
-    let sigParams = util.fromRpcSig(signature);
-    let pubKey = util.ecrecover(util.toBuffer(msgHash),sigParams.v, sigParams.r, sigParams.s);
-    let signerAddress = '0x' + util.pubToAddress(pubKey).toString('hex');
+// function signatureVerify(msgHash, signature, signer){
+//     let sigParams = util.fromRpcSig(signature);
+//     let pubKey = util.ecrecover(util.toBuffer(msgHash),sigParams.v, sigParams.r, sigParams.s);
+//     let signerAddress = '0x' + util.pubToAddress(pubKey).toString('hex');
 
-    return signer === signerAddress;
-}
+//     return signer === signerAddress;
+// }
 
-function signContract(contract){
-    let contractHash = hashContract(contract);
+// function signContract(contract){
+//     let contractHash = hashContract(contract);
 
-    return web3.eth.sign(contract.farmer, contractHash);
-}
+//     return web3.eth.sign(contract.farmer, contractHash);
+// }
 
-function hashContract(contract){
-    return sha3(contract.owner, contract.farmer, contract.ipfsAddress, contract.weiPerBlock, contract.proofWindow, contract.maxStartDate, contract.duration);
-}
+// function hashContract(contract){
+//     return sha3(contract.owner, contract.farmer, contract.ipfsAddress, contract.weiPerBlock, contract.proofWindow, contract.maxStartDate, contract.duration);
+// }
 
 contract('ContractRegistry', function(accounts) {
     it("should create a contract", function(done){
@@ -33,10 +34,10 @@ contract('ContractRegistry', function(accounts) {
                          duration: 1000
                        };
 
-        let signature = signContract(contract);
+        let signature = ethboxutil.signContract(contract);
 
         // signature validation in javascript
-        assert.equal(signatureVerify(hashContract(contract), signature, contract.farmer), true, "signature errata");
+        assert.equal(ethboxutil.signatureVerify(ethboxutil.hashContract(contract), signature, contract.farmer), true, "signature errata");
 
         registry.NewContract(function(err, event){
             assert.equal(event.args.owner, contract.owner, "owner errato");

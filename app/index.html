@@ -7,16 +7,19 @@
         <script src="./app.js"></script>
     </head>
     <body>
-        <h1>Ethbox</h1>
--        <br><label for="farmer">Farmer:</label><input type="text" id="farmer" placeholder="0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
--        <br><label for="duration">Duration:</label><input type="text" id="duration" placeholder="100"></input>
--        <br><label for="ipfs">Ipfs object:</label><input type="text" id="ipfs"></input>
--        <br><br><button id="submit" onclick="createContract()">Create contract</button>
+        <div>
+            <h1>Ethbox</h1>
+            -       <br><label for="farmer">Farmer:</label><input type="text" id="farmer" placeholder="0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
+            -       <br><label for="duration">Duration:</label><input type="text" id="duration" placeholder="100"></input>
+            -       <br><label for="ipfs">Ipfs object:</label><input type="text" id="ipfs"></input>
+            -       <br><br><button id="submit" onclick="createContract()">Create contract</button>
+            -       <br><br><button id="send" onclick="send()">Send</button>
+            <ul id="contractlist">
+            </ul>
+        </div>
         <br/>
         <div>
-            <ul id="contractlist">
-                
-            </ul>
+            <h1>Farmer</h1>
         </div>
    </body>
 </html>
